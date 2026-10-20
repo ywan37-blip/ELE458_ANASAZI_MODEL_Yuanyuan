@@ -23,6 +23,7 @@ private:
 	int houseID = 0;
 
 	std::ofstream out;
+	std::string outputdir; //adds output of all the files
 	struct Parameters
 	{
 		int startYear;

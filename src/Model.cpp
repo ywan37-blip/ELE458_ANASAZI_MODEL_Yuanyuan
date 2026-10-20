@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <vector>
 #include <boost/mpi.hpp>
+#include <boost/filesystem.hpp>
 #include "repast_hpc/AgentId.h"
 #include "repast_hpc/RepastProcess.h"
 #include "repast_hpc/Utilities.h"
@@ -99,8 +100,19 @@ AnasaziModel::AnasaziModel(std::string propsFile, int argc, char** argv, boost::
 	initAgeGen = new repast::IntUniformGenerator(repast::Random::instance()->createUniIntGenerator(0,param.minDeathAge));
 	initMaizeGen = new repast::IntUniformGenerator(repast::Random::instance()->createUniIntGenerator(param.initMinCorn,param.initMaxCorn));
 
+	//get the outputs dir from properties
+
+	outputdir=props->getProperty("output.dir");
+	
+	if (outputdir.empty()){
+		outputdir="outputs";
+	}
+
+	boost::filesystem::create_directories(outputdir);
+
 	string resultFile = props->getProperty("result.file");
-	out.open(resultFile);
+
+	out.open(outputdir+"/"+resultFile);
 	out << "Year,Number-of-Households" << endl;
 }
 
