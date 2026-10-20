@@ -62,6 +62,7 @@ public:
 	int getZone(){return zone; }
 	int getMaizeZone(){return maizeZone; }
 	int getExpectedYield();
+	double getSoilQuality();
 	bool getWater(){return isWater; }
 	int getState(){return state; }
 

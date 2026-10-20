@@ -76,6 +76,15 @@ void Household::chooseField(Location* Field)
 
 	//set the new location as a field
 	Field->setState(2);
-
 	assignedField = Field;
+}
+
+
+//getter to get the age
+int Household::getAge(){
+	return age;
+}
+
+int Household::getMaizeStorage(){
+	return maizeStorage;
 }

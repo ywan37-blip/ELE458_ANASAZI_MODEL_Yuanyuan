@@ -31,6 +31,8 @@ public:
 	bool fission(int minFissionAge, int maxFissionAge, double gen, double fProb);
 	void nextYear(int needs);
 	void chooseField(Location* Field);
+	int getMaizeStorage();
+	int getAge();
 };
 
 #endif
