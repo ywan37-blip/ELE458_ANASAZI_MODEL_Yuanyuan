@@ -25,6 +25,7 @@ private:
 	//outputvar
 	std::ofstream out;
 	std::ofstream envOut;
+	std::ofstream cellOut;
 
 	std::string outputdir; //adds output of all the files
 	struct Parameters
@@ -111,6 +112,7 @@ public:
 	void removeHousehold(Household* household);
 	bool relocateHousehold(Household* household);
 	void writeEnvironment();
+	void writeCellYears();
 };
 
 #endif

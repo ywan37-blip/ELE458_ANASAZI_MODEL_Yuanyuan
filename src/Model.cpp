@@ -119,6 +119,11 @@ AnasaziModel::AnasaziModel(std::string propsFile, int argc, char** argv, boost::
 	envOut.open(outputdir + "/environment.csv");
 	envOut << "year,streams,alluvium,pdsi_general,pdsi_north,pdsi_mid,pdsi_natural,pdsi_upland,pdsi_kinbiko" << endl;
 
+
+	cellOut.open(outputdir + "/cell_years.csv");
+	cellOut << "year,x,y,yeild,water.state";
+
+
 }
 
 AnasaziModel::~AnasaziModel()
@@ -546,8 +551,12 @@ void AnasaziModel::checkWaterConditions()
 
 void AnasaziModel::writeOutputToFile()
 {
+	//orginal data
 	out << year << "," <<  context.size() << std::endl;
+	
+	//new stuff
 	writeEnvironment();
+	writeCellYears();
 }
 
 void AnasaziModel::writeEnvironment(){
@@ -564,6 +573,24 @@ void AnasaziModel::writeEnvironment(){
 		   << pdsi[i].pdsiNatural << "," 
 		   << pdsi[i].pdsiUpland << "," 
 		   << pdsi[i].pdsiKinbiko << "\n";
+}
+
+void AnasaziModel::writeCellYears(){
+	//go through x and y
+	for (int i = 0;i < boardSizeX; i++){
+		for (int j = 0;j < boardSizeY; j++){
+			
+			//get current location?
+			std::vector<Location*> locationList;
+			locationSpace->getObjectsAt(repast::Point<int>(i, j), locationList);
+			Location* loc = locationList[0];
+
+			//produces maise
+			//or produces water 
+
+		}
+	}
+
 }
 
 void  AnasaziModel::updateLocationProperties()
