@@ -114,6 +114,11 @@ AnasaziModel::AnasaziModel(std::string propsFile, int argc, char** argv, boost::
 
 	out.open(outputdir+"/"+resultFile);
 	out << "Year,Number-of-Households" << endl;
+
+
+	envOut.open(outputdir + "/environment.csv");
+	envOut << "year,streams,alluvium,pdsi_general,pdsi_north,pdsi_mid,pdsi_natural,pdsi_upland,pdsi_kinbiko" << endl;
+
 }
 
 AnasaziModel::~AnasaziModel()
@@ -204,10 +209,10 @@ void AnasaziModel::initAgents()
 
 void AnasaziModel::doPerTick()
 {
-	updateLocationProperties();
-	writeOutputToFile();
+	updateLocationProperties(); //yeild and water
+	writeOutputToFile(); // all the ouputs to all the files
 	year++;
-	updateHouseholdProperties();
+	updateHouseholdProperties(); //household acts
 }
 
 void AnasaziModel::initSchedule(repast::ScheduleRunner& runner)
@@ -542,6 +547,23 @@ void AnasaziModel::checkWaterConditions()
 void AnasaziModel::writeOutputToFile()
 {
 	out << year << "," <<  context.size() << std::endl;
+	writeEnvironment();
+}
+
+void AnasaziModel::writeEnvironment(){
+
+	int i =year - param.startYear;
+
+//write one row for the current year
+	envOut << year << ","
+		   << existStreams << ","
+		   << existAlluvium << ","
+		   << pdsi[i].pdsiGeneral << "," 
+		   << pdsi[i].pdsiNorth << "," 
+		   << pdsi[i].pdsiMid << "," 
+		   << pdsi[i].pdsiNatural << "," 
+		   << pdsi[i].pdsiUpland << "," 
+		   << pdsi[i].pdsiKinbiko << "\n";
 }
 
 void  AnasaziModel::updateLocationProperties()
@@ -796,3 +818,4 @@ bool AnasaziModel::relocateHousehold(Household* household)
 			return true;
 		}
 }
+

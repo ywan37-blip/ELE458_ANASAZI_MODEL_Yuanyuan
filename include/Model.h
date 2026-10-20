@@ -22,7 +22,10 @@ private:
 	int randomSeed;
 	int houseID = 0;
 
+	//outputvar
 	std::ofstream out;
+	std::ofstream envOut;
+
 	std::string outputdir; //adds output of all the files
 	struct Parameters
 	{
@@ -107,6 +110,7 @@ public:
 	bool fieldSearch(Household* household);
 	void removeHousehold(Household* household);
 	bool relocateHousehold(Household* household);
+	void writeEnvironment();
 };
 
 #endif
