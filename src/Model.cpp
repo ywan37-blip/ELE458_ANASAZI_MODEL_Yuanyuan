@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <vector>
 #include <boost/mpi.hpp>
+#include <boost/filesystem.hpp>
 #include "repast_hpc/AgentId.h"
 #include "repast_hpc/RepastProcess.h"
 #include "repast_hpc/Utilities.h"
@@ -99,15 +100,54 @@ AnasaziModel::AnasaziModel(std::string propsFile, int argc, char** argv, boost::
 	initAgeGen = new repast::IntUniformGenerator(repast::Random::instance()->createUniIntGenerator(0,param.minDeathAge));
 	initMaizeGen = new repast::IntUniformGenerator(repast::Random::instance()->createUniIntGenerator(param.initMinCorn,param.initMaxCorn));
 
+	//should we do the additional outputs
+	viewerOutput = (props->getProperty("viewer.output") == "true");
+
+	//get the outputs dir from properties
+
+	outputdir=props->getProperty("output.dir");
+
+	
+	if (outputdir.empty()){
+		outputdir="outputs";
+	}
+
+	boost::filesystem::create_directories(outputdir);
+	std::cout << "outputdir='" << outputdir << "' viewerOutput=" << viewerOutput << std::endl;
+
 	string resultFile = props->getProperty("result.file");
-	out.open(resultFile);
-	out << "Year,Number-of-Households" << endl;
+
+	houseNumout.open(outputdir+"/"+resultFile);
+	houseNumout << "Year,Number-of-Households" << endl;
+
+	if (viewerOutput)
+{
+
+
+
+	envOut.open(outputdir + "/environment.csv");
+	envOut << "year,streams,alluvium,pdsi_general,pdsi_north,pdsi_mid,pdsi_natural,pdsi_upland,pdsi_kinbiko" << endl;
+
+
+	cellOut.open(outputdir + "/cell_years.csv");
+	cellOut << "year,x,y,yield,water,state"<< endl;
+
+	householdOut.open(outputdir + "/household.csv");
+	householdOut << "year,id,house_x,house_y,field_x,field_y,maize,age"<< endl;
+}
+
 }
 
 AnasaziModel::~AnasaziModel()
 {
 	delete props;
-	out.close();
+	houseNumout.close();
+	if (viewerOutput)
+{
+	envOut.close();
+	cellOut.close();
+	householdOut.close();
+}
 }
 
 void AnasaziModel::initAgents()
@@ -192,10 +232,10 @@ void AnasaziModel::initAgents()
 
 void AnasaziModel::doPerTick()
 {
-	updateLocationProperties();
-	writeOutputToFile();
+	updateLocationProperties(); //yeild and water
+	writeOutputToFile(); // all the ouputs to all the files
 	year++;
-	updateHouseholdProperties();
+	updateHouseholdProperties(); //household acts
 }
 
 void AnasaziModel::initSchedule(repast::ScheduleRunner& runner)
@@ -529,7 +569,98 @@ void AnasaziModel::checkWaterConditions()
 
 void AnasaziModel::writeOutputToFile()
 {
-	out << year << "," <<  context.size() << std::endl;
+	//orginal data
+	houseNumout << year << "," <<  context.size() << std::endl;
+	if (viewerOutput) //if value is true
+{
+	//new stuff added by jack
+	writeEnvironment();
+	writeCellYears();
+	writeHouseHolds();
+}
+}
+
+void AnasaziModel::writeEnvironment(){
+
+	int i =year - param.startYear;
+
+//write one row for the current year
+	envOut << year << ","
+		   << existStreams << ","
+		   << existAlluvium << ","
+		   << pdsi[i].pdsiGeneral << "," 
+		   << pdsi[i].pdsiNorth << "," 
+		   << pdsi[i].pdsiMid << "," 
+		   << pdsi[i].pdsiNatural << "," 
+		   << pdsi[i].pdsiUpland << "," 
+		   << pdsi[i].pdsiKinbiko << "\n";
+}
+
+void AnasaziModel::writeCellYears(){
+	//go through x and y
+	for (int i = 0;i < boardSizeX; i++){
+		for (int j = 0;j < boardSizeY; j++){
+			
+			//get current location?
+			std::vector<Location*> locationList;
+			locationSpace->getObjectsAt(repast::Point<int>(i, j), locationList);
+			Location* loc = locationList[0];
+
+			//produces maise
+			//or produces water 
+			
+			if ( !( loc -> getMaizeZone() >= 2  ||  loc -> getWater()) ){
+				continue;
+			}        	
+			// yield, water, state 
+			cellOut << year << "," << i << "," << j << ","
+			<< loc -> getExpectedYield() << ","
+			<< loc -> getWater() << ","
+			<< loc -> getState()
+        	<< "\n";
+
+		}
+	}
+
+}
+
+void AnasaziModel::writeHouseHolds(){
+	repast::SharedContext<Household>::const_iterator local_agents_iter  = context.begin();
+	repast::SharedContext<Household>::const_iterator local_agents_end = context.end();
+
+	while(local_agents_iter != local_agents_end){
+		Household* household = (&**local_agents_iter); 
+
+		//house
+		std::vector<int> houseloc;
+		householdSpace->getLocation(household->getId(),houseloc);
+
+		//field cell
+		int fx =-1;
+		int fy =-1;
+
+		Location* field = household->getAssignedField();
+
+		//no feild
+		if (field!=NULL)
+		{
+			std::vector<int> fieldloc;
+			locationSpace->getLocation(field->getId(), fieldloc);
+			fx = fieldloc[0];
+			fy = fieldloc[1];
+		}
+
+		//write the row
+		householdOut << year << ","
+		    << household->getId().id() << ","
+		    << houseloc[0] << "," << houseloc[1] << ","
+		    << fx << "," << fy << ","
+		    << household->getMaizeStorage() << ","
+		    << household->getAge()
+		    << "\n";
+
+		local_agents_iter++;
+	}
 }
 
 void  AnasaziModel::updateLocationProperties()
@@ -784,3 +915,4 @@ bool AnasaziModel::relocateHousehold(Household* household)
 			return true;
 		}
 }
+

@@ -7,7 +7,7 @@ proc.per.y = 1
 grid.buffer = 0
 
 start.year = 800
-end.year = 1350
+end.year = 850
 max.store.year = 2
 max.storage = 1600
 household.need = 800
@@ -25,3 +25,6 @@ harvest.adj = 0.54484
 new.household.ini.maize = 0.33000
 
 result.file = NumberOfHousehold.csv
+
+output.dir = outputs
+viewer.output = true

@@ -59,11 +59,15 @@ public:
 
 	virtual repast::AgentId& getId() { return LocationID; }
 	virtual const repast::AgentId& getId() const { return LocationID; }
-	int getZone(){return zone; }
-	int getMaizeZone(){return maizeZone; }
+
+
 	int getExpectedYield();
-	bool getWater(){return isWater; }
-	int getState(){return state; }
+	double getSoilQuality();
+
+	int getZone();
+	int getMaizeZone();
+	bool getWater();
+	int getState();
 
 	void checkWater(bool existStreams, bool existAlluvium, int x, int y, int year);
 	void calculateYield(int y, double Ha, double gen);

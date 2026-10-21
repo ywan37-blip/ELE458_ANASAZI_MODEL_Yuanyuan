@@ -34,6 +34,28 @@ int Location::getExpectedYield(){
 	return expectedHarvest;
 }
 
+//get expected soil quality
+double Location::getSoilQuality(){
+	return soilQuality;
+}
+
+int Location::getZone(){
+	return zone; 
+}
+
+int Location::getMaizeZone(){
+	return maizeZone; 
+}
+
+bool Location::getWater(){
+	return isWater; 
+}
+
+int Location::getState(){
+	return state; 
+}
+
+
 //calculate harvest of the field
 void Location::calculateYield(int y, double Ha, double gen)
 {

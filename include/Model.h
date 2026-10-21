@@ -22,7 +22,15 @@ private:
 	int randomSeed;
 	int houseID = 0;
 
-	std::ofstream out;
+	//outputvar
+	std::ofstream houseNumout;
+	std::ofstream envOut;
+	std::ofstream cellOut;
+	std::ofstream householdOut;
+
+	std::string outputdir; //adds output of all the files
+	bool viewerOutput; //do you want the additional files
+
 	struct Parameters
 	{
 		int startYear;
@@ -106,6 +114,10 @@ public:
 	bool fieldSearch(Household* household);
 	void removeHousehold(Household* household);
 	bool relocateHousehold(Household* household);
+
+	void writeEnvironment();
+	void writeCellYears();
+	void writeHouseHolds();
 };
 
 #endif
