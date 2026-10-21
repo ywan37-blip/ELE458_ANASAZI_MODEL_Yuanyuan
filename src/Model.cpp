@@ -121,7 +121,7 @@ AnasaziModel::AnasaziModel(std::string propsFile, int argc, char** argv, boost::
 
 
 	cellOut.open(outputdir + "/cell_years.csv");
-	cellOut << "year,x,y,yeild,water.state";
+	cellOut << "year,x,y,yeild,water.state"<< endl;
 
 
 }
