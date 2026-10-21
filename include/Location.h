@@ -63,11 +63,11 @@ public:
 
 	int getExpectedYield();
 	double getSoilQuality();
-	
-	int getZone(){return zone; }
-	int getMaizeZone(){return maizeZone; }
-	bool getWater(){return isWater; }
-	int getState(){return state; }
+
+	int getZone();
+	int getMaizeZone();
+	bool getWater();
+	int getState();
 
 	void checkWater(bool existStreams, bool existAlluvium, int x, int y, int year);
 	void calculateYield(int y, double Ha, double gen);

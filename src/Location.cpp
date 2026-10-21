@@ -39,6 +39,14 @@ double Location::getSoilQuality(){
 	return soilQuality;
 }
 
+int getZone(){return zone; }
+
+int getMaizeZone(){return maizeZone; }
+
+bool getWater(){return isWater; }
+
+int getState(){return state; }
+
 
 //calculate harvest of the field
 void Location::calculateYield(int y, double Ha, double gen)
