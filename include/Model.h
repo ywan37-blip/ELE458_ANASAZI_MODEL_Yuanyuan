@@ -23,7 +23,7 @@ private:
 	int houseID = 0;
 
 	//outputvar
-	std::ofstream out;
+	std::ofstream houseNumout;
 	std::ofstream envOut;
 	std::ofstream cellOut;
 	std::ofstream householdOut;

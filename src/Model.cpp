@@ -112,8 +112,11 @@ AnasaziModel::AnasaziModel(std::string propsFile, int argc, char** argv, boost::
 
 	string resultFile = props->getProperty("result.file");
 
-	out.open(outputdir+"/"+resultFile);
-	out << "Year,Number-of-Households" << endl;
+
+
+
+	houseNumout.open(outputdir+"/"+resultFile);
+	houseNumout << "Year,Number-of-Households" << endl;
 
 
 	envOut.open(outputdir + "/environment.csv");
@@ -126,12 +129,17 @@ AnasaziModel::AnasaziModel(std::string propsFile, int argc, char** argv, boost::
 	householdOut.open(outputdir + "/household.csv");
 	householdOut << "year,id,house_x,house_y,field_x,field_y,maize,age"<< endl;
 
+
+
 }
 
 AnasaziModel::~AnasaziModel()
 {
 	delete props;
-	out.close();
+	houseNumout.close();
+	envOut.close();
+	cellOut.close();
+	householdOut.close();
 }
 
 void AnasaziModel::initAgents()
@@ -554,7 +562,7 @@ void AnasaziModel::checkWaterConditions()
 void AnasaziModel::writeOutputToFile()
 {
 	//orginal data
-	out << year << "," <<  context.size() << std::endl;
+	houseNumout << year << "," <<  context.size() << std::endl;
 	
 	//new stuff added by jack
 	writeEnvironment();
