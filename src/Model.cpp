@@ -587,6 +587,16 @@ void AnasaziModel::writeCellYears(){
 
 			//produces maise
 			//or produces water 
+			
+			if ( !( loc -> getMaizeZone() >= 2  ||  loc -> getWater()) ){
+				continue;
+			}        	
+			// yield, water, state 
+			cellOut << year << "," << i << "," << j << ","
+			<< loc -> getExpectedYield() << ","
+			<< loc -> getWater() << ","
+			<< loc -> getState()
+        	<< "\n";
 
 		}
 	}
