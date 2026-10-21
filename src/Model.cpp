@@ -123,6 +123,8 @@ AnasaziModel::AnasaziModel(std::string propsFile, int argc, char** argv, boost::
 	cellOut.open(outputdir + "/cell_years.csv");
 	cellOut << "year,x,y,yeild,water.state"<< endl;
 
+	householdOut.open(outputdir + "/household.csv");
+	householdOut << "year,id,house_x,house_y,field_x,field_y,maize,age"<< endl;
 
 }
 
@@ -554,9 +556,10 @@ void AnasaziModel::writeOutputToFile()
 	//orginal data
 	out << year << "," <<  context.size() << std::endl;
 	
-	//new stuff
+	//new stuff added by jack
 	writeEnvironment();
 	writeCellYears();
+	writeHouseHolds();
 }
 
 void AnasaziModel::writeEnvironment(){
@@ -601,6 +604,45 @@ void AnasaziModel::writeCellYears(){
 		}
 	}
 
+}
+
+void AnasaziModel::writeHouseHolds(){
+	repast::SharedContext<Household>::const_iterator local_agents_iter  = context.begin();
+	repast::SharedContext<Household>::const_iterator local_agents_end = context.end();
+
+	while(local_agents_iter != local_agents_end){
+		Household* household = (&**local_agents_iter); 
+
+		//house
+		std::vector<int> houseloc;
+		householdSpace->getLocation(household->getId(),houseloc);
+
+		//field cell
+		int fx =-1;
+		int fy =-1;
+
+		Location* field = household->getAssignedField();
+
+		//no feild
+		if (field!=NULL)
+		{
+			std::vector<int> fieldloc;
+			locationSpace->getLocation(field->getId(), fieldloc);
+			fx = fieldloc[0];
+			fy = fieldloc[1];
+		}
+
+		//write the row
+		householdOut << year << ","
+		    << household->getId().id() << ","
+		    << houseloc[0] << "," << houseloc[1] << ","
+		    << fx << "," << fy << ","
+		    << household->getMaizeStorage() << ","
+		    << household->getAge()
+		    << "\n";
+
+		local_agents_iter++;
+	}
 }
 
 void  AnasaziModel::updateLocationProperties()
