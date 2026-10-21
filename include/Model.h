@@ -29,6 +29,8 @@ private:
 	std::ofstream householdOut;
 
 	std::string outputdir; //adds output of all the files
+	bool viewerOutput; //do you want the additional files
+
 	struct Parameters
 	{
 		int startYear;

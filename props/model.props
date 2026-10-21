@@ -27,3 +27,4 @@ new.household.ini.maize = 0.33000
 result.file = NumberOfHousehold.csv
 
 output.dir = outputs
+viewer.output = true

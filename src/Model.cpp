@@ -100,23 +100,29 @@ AnasaziModel::AnasaziModel(std::string propsFile, int argc, char** argv, boost::
 	initAgeGen = new repast::IntUniformGenerator(repast::Random::instance()->createUniIntGenerator(0,param.minDeathAge));
 	initMaizeGen = new repast::IntUniformGenerator(repast::Random::instance()->createUniIntGenerator(param.initMinCorn,param.initMaxCorn));
 
+	//should we do the additional outputs
+	viewerOutput = (props->getProperty("viewer.output") == "true");
+
 	//get the outputs dir from properties
 
 	outputdir=props->getProperty("output.dir");
+
 	
 	if (outputdir.empty()){
 		outputdir="outputs";
 	}
 
 	boost::filesystem::create_directories(outputdir);
+	std::cout << "outputdir='" << outputdir << "' viewerOutput=" << viewerOutput << std::endl;
 
 	string resultFile = props->getProperty("result.file");
 
-
-
-
 	houseNumout.open(outputdir+"/"+resultFile);
 	houseNumout << "Year,Number-of-Households" << endl;
+
+	if (viewerOutput)
+{
+
 
 
 	envOut.open(outputdir + "/environment.csv");
@@ -124,12 +130,11 @@ AnasaziModel::AnasaziModel(std::string propsFile, int argc, char** argv, boost::
 
 
 	cellOut.open(outputdir + "/cell_years.csv");
-	cellOut << "year,x,y,yeild,water.state"<< endl;
+	cellOut << "year,x,y,yield,water,state"<< endl;
 
 	householdOut.open(outputdir + "/household.csv");
 	householdOut << "year,id,house_x,house_y,field_x,field_y,maize,age"<< endl;
-
-
+}
 
 }
 
@@ -137,9 +142,12 @@ AnasaziModel::~AnasaziModel()
 {
 	delete props;
 	houseNumout.close();
+	if (viewerOutput)
+{
 	envOut.close();
 	cellOut.close();
 	householdOut.close();
+}
 }
 
 void AnasaziModel::initAgents()
@@ -563,11 +571,13 @@ void AnasaziModel::writeOutputToFile()
 {
 	//orginal data
 	houseNumout << year << "," <<  context.size() << std::endl;
-	
+	if (viewerOutput) //if value is true
+{
 	//new stuff added by jack
 	writeEnvironment();
 	writeCellYears();
 	writeHouseHolds();
+}
 }
 
 void AnasaziModel::writeEnvironment(){
