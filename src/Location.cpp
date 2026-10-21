@@ -39,13 +39,21 @@ double Location::getSoilQuality(){
 	return soilQuality;
 }
 
-int getZone(){return zone; }
+int Location::getZone(){
+	return zone; 
+}
 
-int getMaizeZone(){return maizeZone; }
+int Location::getMaizeZone(){
+	return maizeZone; 
+}
 
-bool getWater(){return isWater; }
+bool Location::getWater(){
+	return isWater; 
+}
 
-int getState(){return state; }
+int Location::getState(){
+	return state; 
+}
 
 
 //calculate harvest of the field
