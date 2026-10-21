@@ -171,6 +171,34 @@ void AnasaziModel::initAgents()
 	readCsvWater();
 	readCsvPdsi();
 	readCsvHydro();
+
+
+	if (viewerOutput)
+	{
+		std::ofstream cellsOut(outputdir + "/cells.csv");
+		cellsOut << "x,y,zone,maize_zone,soil_quality" << endl;
+
+		for (int i = 0; i < boardSizeX; i++)
+		{
+			for (int j = 0; j < boardSizeY; j++)
+			{
+				std::vector<Location*> locationList;
+				locationSpace->getObjectsAt(repast::Point<int>(i, j), locationList);
+				Location* loc = locationList[0];
+
+				cellsOut << i << "," << j << ","
+				         << loc->getZone() << ","
+				         << loc->getMaizeZone() << ","
+				         << loc->getSoilQuality()
+				         << "\n";
+			}
+		}
+		cellsOut.close();
+	}
+
+
+
+
 	int noOfAgents  = repast::strToInt(props->getProperty("count.of.agents"));
 	repast::IntUniformGenerator xGen = repast::IntUniformGenerator(repast::Random::instance()->createUniIntGenerator(0,boardSizeX-1));
 	repast::IntUniformGenerator yGen = repast::IntUniformGenerator(repast::Random::instance()->createUniIntGenerator(0,boardSizeY-1));
@@ -915,4 +943,3 @@ bool AnasaziModel::relocateHousehold(Household* household)
 			return true;
 		}
 }
-
