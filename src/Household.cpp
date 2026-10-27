@@ -19,6 +19,7 @@ Household::~Household()
 
 }
 
+//BUGGED needs to be a double not an int
 int Household::splitMaizeStored(int percentage)
 {
 	int maizeEndowment;
